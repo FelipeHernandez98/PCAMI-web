@@ -739,4 +739,19 @@ router.post('/sell_done', async (req, res) => {
 
 });
 
+router.get('/armarPc', (req, res)=>{
+     res.render('links/armarPc')
+})
+router.post('/armarPc', (req, res )=>{
+     const {
+          marca, 
+          referencia, 
+          procesador, 
+          ram, 
+          almacenamiento, 
+          grafica, 
+          precio
+     } = req.params;
+});
+
 module.exports = router;
