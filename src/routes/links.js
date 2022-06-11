@@ -4,7 +4,7 @@ const pool = require('../databases');
 const { isLoggedIn } = require('../lib/protectLinks');
 const helpers = require('../lib/helpers');
 const LocalStorage = require('node-localstorage').LocalStorage,
-    localStorage = new LocalStorage('./scratch');
+     localStorage = new LocalStorage('./scratch');
 require('../routes/authentication');
 const uuid = require('uuid').v4;
 const cloudinary = require('cloudinary').v2;
@@ -24,7 +24,7 @@ const formatterPeso = new Intl.NumberFormat('es-CO', {
 })
 
 
-router.get('/mensajes', (req, res)=>{
+router.get('/mensajes', (req, res) => {
      res.render('links/mensajes');
 });
 
@@ -46,7 +46,7 @@ router.post('/edit_slogan', isLoggedIn, async (req, res) => {
           descripcion: slog
      }
      let data = await pool.query('select * from slogan');
-    
+
 
      if (Object.keys(data).length > 0) {
           await pool.query('UPDATE slogan SET descripcion = ? WHERE id = ?', [slog, 1]);
@@ -418,7 +418,7 @@ router.get('/registrar_venta', async (req, res) => {
 
      var carrito = '0';
      //recorriendo el storage para ver si hay computadores agregados para vender
-     
+
      for (let x = 0; x < localStorage.length; x++) {
           carrito += (localStorage.key(x)) + ",";
           console.log(localStorage.key(x))
@@ -496,8 +496,8 @@ router.get('/listar_facturas/:id', async (req, res) => {
           req.flash('message', 'No hay facturas asociadas ');
           res.redirect('/links/clientes');
 
-     }else{
-     res.render('links/list_facturas', { facturas });
+     } else {
+          res.render('links/list_facturas', { facturas });
      }
 
 });
@@ -516,37 +516,37 @@ router.get('/ver_facturas/:codigo_factura', async (req, res) => {
           req.flash('message', 'No hay facturas asociadas ');
           res.redirect('/links/clientes');
 
-     }else{
-     for (let clave in data) {
-          // 
-          if (data.hasOwnProperty(clave)) {
+     } else {
+          for (let clave in data) {
+               // 
+               if (data.hasOwnProperty(clave)) {
 
-               let pc = await pool.query('SELECT * FROM computador WHERE id = ? ', [data[clave].id_producto]);
-               let vendedor = await pool.query('SELECT * FROM vendedor WHERE id = ? ', [data[clave].id_vendedor]);
-               var factura = {
-                    cliente: '',
-                    producto: '',
-                    factura: '',
-                    fecha: '',
-                    vendedor: '',
-                    cantidad: 0,
-                    ingresos: '',
+                    let pc = await pool.query('SELECT * FROM computador WHERE id = ? ', [data[clave].id_producto]);
+                    let vendedor = await pool.query('SELECT * FROM vendedor WHERE id = ? ', [data[clave].id_vendedor]);
+                    var factura = {
+                         cliente: '',
+                         producto: '',
+                         factura: '',
+                         fecha: '',
+                         vendedor: '',
+                         cantidad: 0,
+                         ingresos: '',
 
-               }; let temp = pc[0].precio * data[clave].cantidad;
-               ingresos_totales += pc[0].precio * data[clave].cantidad;
-               factura.cliente = user[0].clie_nomb + " " + user[0].clie_apell;
-               factura.producto = pc[0].comp_marca + " " + pc[0].comp_ref;
-               factura.factura = data[clave].id_factura;
-               factura.vendedor = vendedor[0].vend_nombre + " " + vendedor[0].vend_apell;
-               factura.fecha = data[clave].fecha_venta;
-               factura.cantidad = data[clave].cantidad;
-               factura.ingresos = formatterPeso.format(temp);
+                    }; let temp = pc[0].precio * data[clave].cantidad;
+                    ingresos_totales += pc[0].precio * data[clave].cantidad;
+                    factura.cliente = user[0].clie_nomb + " " + user[0].clie_apell;
+                    factura.producto = pc[0].comp_marca + " " + pc[0].comp_ref;
+                    factura.factura = data[clave].id_factura;
+                    factura.vendedor = vendedor[0].vend_nombre + " " + vendedor[0].vend_apell;
+                    factura.fecha = data[clave].fecha_venta;
+                    factura.cantidad = data[clave].cantidad;
+                    factura.ingresos = formatterPeso.format(temp);
 
-               datos.datos.push(factura);
+                    datos.datos.push(factura);
 
 
+               }
           }
-     }
      }
      let ingresos_to = formatterPeso.format(ingresos_totales);
      let ing = { ingresos_total: ingresos_to }
@@ -695,63 +695,77 @@ router.post('/sell_done', async (req, res) => {
           res.redirect('/links/review_generate_cell');
      } else {
           let clie_nomb = cliente[0].clie_nomb;
-     
+
           var carrito = '0';
-          
+
           var codigoFactura = uuid();
-          codigoFactura = codigoFactura.substring(0,28);
-          
-          var user = await pool.query('SELECT * FROM cliente WHERE clie_nomb = ?',[clie_nomb]);
-          let vend = await pool.query('SELECT * FROM vendedor WHERE vend_nombre = ?',[vendedor]);
-          
+          codigoFactura = codigoFactura.substring(0, 28);
+
+          var user = await pool.query('SELECT * FROM cliente WHERE clie_nomb = ?', [clie_nomb]);
+          let vend = await pool.query('SELECT * FROM vendedor WHERE vend_nombre = ?', [vendedor]);
+
           //recorriendo el storage para ver si hay computadores agregados para vender
           for (let x = 0; x < localStorage.length; x++) {
-               
-              carrito += (localStorage.key(x)) + ",";
-              const venta = {
-                  id_usuario:user[0].id ,
-                  id_producto: localStorage.key(x),
-                  id_factura: codigoFactura,
-                  id_vendedor: vend[0].id,
-                  cantidad: localStorage.getItem(localStorage.key(x))
-             }
-       
-             await pool.query('INSERT INTO venta SET ?', [venta]);
-              
-                  
-                  let query2 = 'UPDATE computador SET existencias = existencias -'+localStorage.getItem(localStorage.key(x))+' WHERE id = '+localStorage.key(x);
-                  
-                  await pool.query(query2);
-                  
-             
-              
 
-              
+               carrito += (localStorage.key(x)) + ",";
+               const venta = {
+                    id_usuario: user[0].id,
+                    id_producto: localStorage.key(x),
+                    id_factura: codigoFactura,
+                    id_vendedor: vend[0].id,
+                    cantidad: localStorage.getItem(localStorage.key(x))
+               }
+
+               await pool.query('INSERT INTO venta SET ?', [venta]);
+
+
+               let query2 = 'UPDATE computador SET existencias = existencias -' + localStorage.getItem(localStorage.key(x)) + ' WHERE id = ' + localStorage.key(x);
+
+               await pool.query(query2);
+
+
+
+
+
           }
-      
+
           localStorage.removeItem("clie_nomb");
           localStorage.removeItem("clie_apell");
           localStorage.removeItem("vendedor");
      }
- 
+
      req.flash('success', 'Venta realizada exitosamente');
-          res.redirect('/links/registrar_venta');
+     res.redirect('/links/registrar_venta');
 
 });
 
-router.get('/armarPc', (req, res)=>{
+router.get('/armar_pc', (req, res) => {
      res.render('links/armarPc')
 })
-router.post('/armarPc', (req, res )=>{
+router.post('/armar_pc', (req, res) => {
      const {
-          marca, 
-          referencia, 
-          procesador, 
-          ram, 
-          almacenamiento, 
-          grafica, 
-          precio
+          tipo,
+          marca,
+          referencia,
+          procesador,
+          ram,
+          almacenamiento,
+          grafica,
      } = req.params;
+
+     const referenciaPc = {
+          comp_tipo: tipo,
+          comp_marca: marca,
+          comp_ref: referencia,
+          comp_proc: procesador,
+          comp_ram: ram,
+          comp_alm: almacenamiento,
+          comp_vid: grafica,
+     }
+
+     await pool.query('INSERT INTO referencia_pc SET ?', [referenciaPc])
+     req.flash('success', 'Solicitud enviada correctamente');
+     res.redirect('armar_pc');
 });
 
 module.exports = router;
