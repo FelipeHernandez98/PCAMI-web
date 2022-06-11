@@ -740,9 +740,9 @@ router.post('/sell_done', async (req, res) => {
 });
 
 router.get('/armar_pc', (req, res) => {
-     res.render('links/armarPc')
+     res.render('links/armar_pc')
 })
-router.post('/armar_pc', (req, res) => {
+router.post('/armar_pc', async(req, res) => {
      const {
           tipo,
           marca,
