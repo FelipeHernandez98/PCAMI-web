@@ -106,7 +106,9 @@ router.post('/add', isLoggedIn, async (req, res) => {
           public_id: result.public_id,
           precio: precio
      };
-     await pool.query('INSERT INTO computador set ?', [newPC]);
+
+     console.log(newPC)
+     /* await pool.query('INSERT INTO computador set ?', [newPC]);
      req.flash('success', 'Computador Agregado Correctamente');
 
      if (tipo == 1) {
@@ -115,7 +117,7 @@ router.post('/add', isLoggedIn, async (req, res) => {
           res.redirect('/links/laptop');
      } else if (tipo == 3) {
           res.redirect('/links/allinone');
-     }
+     } */
 
 
 });
@@ -742,26 +744,29 @@ router.post('/sell_done', async (req, res) => {
 router.get('/armar_pc', (req, res) => {
      res.render('links/armar_pc')
 })
-router.post('/armar_pc', async(req, res) => {
+router.post('/armar_pc', isLoggedIn,async(req, res) => {
+
      const {
           tipo,
           marca,
-          referencia,
           procesador,
           ram,
           almacenamiento,
           grafica,
-     } = req.params;
+          id_cliente
+     } = req.body;
 
      const referenciaPc = {
           comp_tipo: tipo,
           comp_marca: marca,
-          comp_ref: referencia,
           comp_proc: procesador,
           comp_ram: ram,
           comp_alm: almacenamiento,
           comp_vid: grafica,
+          id_cliente: id_cliente
      }
+
+     console.log(referenciaPc)
 
      await pool.query('INSERT INTO referencia_pc SET ?', [referenciaPc])
      req.flash('success', 'Solicitud enviada correctamente');

@@ -16,7 +16,7 @@
                         <div class="form-group">
                             <Label><h5>Seleccione la marca: </h5></Label>
                             <select name="marca" required>
-                                <option>Acer</option>
+                                <option value="Acer">Acer</option>
                                 <option>Asus</option>
                                 <option>HP</option>   
                                 <option>Lenovo</option> 
@@ -24,10 +24,7 @@
                                 <option>Dell</option>                           
                             </select>
                         </div>
-                        <div class="form-group">
-                            <Label><h5>Referencia: </h5></Label>
-                            <input type="text" name="referencia" placeholder="Ej: A315-53-59QQ" autofocus required>
-                        </div>
+                        
                         <div class="form-group">
                             <Label><h5>Procesador: </h5></Label>
                             <select name="procesador" required>
@@ -100,19 +97,15 @@
                                 <option>Amd RX 5500</option>                                                          
                             </select>
                         </div>
+                        {{#if user }}
+
+                         {{#with user}}
+
                         <div class="form-group">
-                            <h5>Subir imagen del pc</h5><br>
-                            <div class="custom-file">
-                            <input type="file" name="img">
-                            </div>
+                            <input type="text" name="id_cliente" value={{ id }} hidden>
                         </div>
-                         <div class="form-group">
-                            <Label>
-                                <h5>Precio: </h5>
-                            </Label>
-                            <br>
-                            <input type="text" name="precio" id="">
-                        </div>
+                            {{/with}}
+                        {{/if}}
                         <div class="form-group">
                             <button class="btn btn-success btn-block">
                                 Enviar
