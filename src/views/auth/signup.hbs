@@ -21,7 +21,10 @@
                         console.log('hola')
                         const username = document.querySelector('#username');
 
-                        fetch()
+                        fetch('http://localhost:4000/links/verificando')
+                            .then((respuesta)=>{
+                                console.log(respuesta)
+                            })
 
                         username.addEventListener('keyup', ({keycode})=>{
                         console.log(username.value)

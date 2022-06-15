@@ -851,4 +851,12 @@ router.get('/solicitudes/:username', async(req, res)=>{
      res.render('links/solicitudes', {peticiones});
 })
 
+router.get('/verificando', async(req, res)=>{
+     
+     const usuarios = await pool.query('SELECT username FROM cliente');
+     console.log(usuarios)
+
+     res.json(usuarios);
+});
+
 module.exports = router;
