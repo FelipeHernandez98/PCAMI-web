@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const moment = require('moment')
 const pool = require('../databases');
 const { isLoggedIn } = require('../lib/protectLinks');
 const helpers = require('../lib/helpers');
@@ -23,10 +24,6 @@ const formatterPeso = new Intl.NumberFormat('es-CO', {
      minimumFractionDigits: 0
 })
 
-
-router.get('/mensajes', (req, res) => {
-     res.render('links/mensajes');
-});
 
 //obteniendo ruta para agregar nuevo pc
 router.get('/add', isLoggedIn, (req, res) => {
@@ -753,9 +750,11 @@ router.post('/armar_pc', isLoggedIn,async(req, res) => {
           ram,
           almacenamiento,
           grafica,
-          id_cliente
+          username
      } = req.body;
 
+     const fecha_solicitud = new Date();
+         
      const referenciaPc = {
           comp_tipo: tipo,
           comp_marca: marca,
@@ -763,14 +762,54 @@ router.post('/armar_pc', isLoggedIn,async(req, res) => {
           comp_ram: ram,
           comp_alm: almacenamiento,
           comp_vid: grafica,
-          id_cliente: id_cliente
+          username: username,
+          fecha_solicitud: fecha_solicitud
      }
-
-     console.log(referenciaPc)
 
      await pool.query('INSERT INTO referencia_pc SET ?', [referenciaPc])
      req.flash('success', 'Solicitud enviada correctamente');
      res.redirect('armar_pc');
+});
+
+router.get('/mensajes', async(req, res)=>{
+     let peticiones = await pool.query('SELECT * FROM referencia_pc');
+
+     for (let index = 0; index < peticiones.length; index++) {
+          fecha = moment(peticiones[index].fecha_solicitud)
+          peticiones[index].fecha_solicitud = fecha.format('DD/MM/YYYY');
+          
+          if(peticiones[index].estado === 0){
+               peticiones[index].estado = 'Pendiente';
+          }else if(peticiones[index].estado === 1){
+               peticiones[index].estado = 'Aceptado';
+          }else{
+               peticiones[index].estado = 'Rechazado';
+          }
+
+     }
+     res.render('links/mensajes', {peticiones});
+})
+
+router.get('/aceptar/:id_referencia', async(req, res)=>{
+
+     const { id_referencia } = req.params;
+     const estado =1;
+
+     await pool.query('UPDATE referencia_pc SET estado = ? WHERE id_referencia = ?', [estado, id_referencia]);
+     req.flash('success', 'Se acepto la solicitud');
+     res.redirect('/links/mensajes');
+
+});
+
+router.get('/rechazar/:id_referencia', async(req, res)=>{
+
+     const { id_referencia } = req.params;
+     const estado =2;
+
+     await pool.query('UPDATE referencia_pc SET estado = ? WHERE id_referencia = ?', [estado, id_referencia]);
+     req.flash('success', 'Se rechazo la solicitud');
+     res.redirect('/links/mensajes');
+
 });
 
 module.exports = router;

@@ -8,15 +8,15 @@
                         <div class="form-group">
                             <Label><h5>Seleccione el Tipo: </h5></Label>
                             <select name="tipo" required>
-                                <option value="1">Escritorio</option>
-                                <option value="2">Portatil</option>
-                                <option value="3">Todo en uno</option>                          
+                                <option>Escritorio</option>
+                                <option>Portatil</option>
+                                <option>Todo en uno</option>                          
                             </select>
                         </div>
                         <div class="form-group">
                             <Label><h5>Seleccione la marca: </h5></Label>
                             <select name="marca" required>
-                                <option value="Acer">Acer</option>
+                                <option>Acer</option>
                                 <option>Asus</option>
                                 <option>HP</option>   
                                 <option>Lenovo</option> 
@@ -102,7 +102,7 @@
                          {{#with user}}
 
                         <div class="form-group">
-                            <input type="text" name="id_cliente" value={{ id }} hidden>
+                            <input type="text" name="username" value={{ username }} hidden>
                         </div>
                             {{/with}}
                         {{/if}}
