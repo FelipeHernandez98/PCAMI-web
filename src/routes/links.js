@@ -854,8 +854,6 @@ router.get('/solicitudes/:username', async(req, res)=>{
 router.get('/verificando', async(req, res)=>{
      
      const usuarios = await pool.query('SELECT username FROM cliente');
-     console.log(usuarios)
-
      res.json(usuarios);
 });
 
