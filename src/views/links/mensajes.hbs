@@ -80,16 +80,27 @@
 									<label>Almacenamiento: {{comp_alm}}</label>
 									<br>
 									<label>Grafica: {{comp_vid}}</label>
+									
+									{{#if estado }}
 									<br>
 									<label>Estado: <span style="color: black; font-weight: bold;">{{estado}}</span></label>
 									<br>
+									
 									<a href="/links/aceptar/{{id_referencia}}" class="btn btn-success">
 										Aceptar
 									</a>
 									<a href="/links/rechazar/{{id_referencia}}" class="btn btn-danger">
 										Rechazar
 									</a>
+									<a href="/links/despachar/{{id_referencia}}" class="btn btn-warning">
+										Despachar
+									</a>
 									
+									{{else}}
+										<br>
+										<label>Estado: <span style="color: black; font-weight: bold;">Despachado</span></label>
+									{{/if}}
+																	
 								</div>
 
 							</div>

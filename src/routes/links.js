@@ -782,8 +782,10 @@ router.get('/mensajes', async(req, res)=>{
                peticiones[index].estado = 'Pendiente';
           }else if(peticiones[index].estado === 1){
                peticiones[index].estado = 'Aceptado';
-          }else{
+          }else if(peticiones[index].estado === 2){
                peticiones[index].estado = 'Rechazado';
+          }else if(peticiones[index].estado === 3){
+               peticiones[index].estado = false;
           }
 
      }
@@ -808,6 +810,17 @@ router.get('/rechazar/:id_referencia', async(req, res)=>{
 
      await pool.query('UPDATE referencia_pc SET estado = ? WHERE id_referencia = ?', [estado, id_referencia]);
      req.flash('success', 'Se rechazo la solicitud');
+     res.redirect('/links/mensajes');
+
+});
+
+router.get('/despachar/:id_referencia', async(req, res)=>{
+
+     const { id_referencia } = req.params;
+     const estado =3;
+
+     await pool.query('UPDATE referencia_pc SET estado = ? WHERE id_referencia = ?', [estado, id_referencia]);
+     req.flash('success', 'Se despachó la solicitud');
      res.redirect('/links/mensajes');
 
 });
