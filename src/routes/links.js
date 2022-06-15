@@ -754,6 +754,7 @@ router.post('/armar_pc', isLoggedIn,async(req, res) => {
      } = req.body;
 
      const fecha_solicitud = new Date();
+     const estado = 0;
          
      const referenciaPc = {
           comp_tipo: tipo,
@@ -763,7 +764,8 @@ router.post('/armar_pc', isLoggedIn,async(req, res) => {
           comp_alm: almacenamiento,
           comp_vid: grafica,
           username: username,
-          fecha_solicitud: fecha_solicitud
+          fecha_solicitud: fecha_solicitud,
+          estado: estado
      }
 
      await pool.query('INSERT INTO referencia_pc SET ?', [referenciaPc])
@@ -824,5 +826,29 @@ router.get('/despachar/:id_referencia', async(req, res)=>{
      res.redirect('/links/mensajes');
 
 });
+
+router.get('/solicitudes/:username', async(req, res)=>{
+
+     const {username} = req.params;
+
+     let peticiones = await pool.query('SELECT * FROM referencia_pc WHERE username = ?', [username] );
+
+     for (let index = 0; index < peticiones.length; index++) {
+          fecha = moment(peticiones[index].fecha_solicitud)
+          peticiones[index].fecha_solicitud = fecha.format('DD/MM/YYYY');
+          
+          if(peticiones[index].estado === 0){
+               peticiones[index].estado = 'Pendiente';
+          }else if(peticiones[index].estado === 1){
+               peticiones[index].estado = 'Aceptado';
+          }else if(peticiones[index].estado === 2){
+               peticiones[index].estado = 'Rechazado';
+          }else if(peticiones[index].estado === 3){
+               peticiones[index].estado = false;
+          }
+
+     }
+     res.render('links/solicitudes', {peticiones});
+})
 
 module.exports = router;
