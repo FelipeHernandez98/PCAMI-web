@@ -857,4 +857,10 @@ router.get('/verificando', async(req, res)=>{
      res.json(usuarios);
 });
 
+router.get('/verificandoEmail', async(req, res)=>{
+     
+     const usuarios = await pool.query('SELECT email FROM cliente');
+     res.json(usuarios);
+});
+
 module.exports = router;
