@@ -466,24 +466,27 @@ router.get('/clientes', async (req, res) => {
 
 });
 
-/*router.get('/ingresos', async (req, res) => {
+router.get('/ingresos', async (req, res) => {
 
      let ingresos = await pool.query('SELECT * FROM ingresos');
     
      if (Object.keys(ingresos).length === 0) {
+
 
      }else{
      for (let clave in ingresos) {
           // 
           if (ingresos.hasOwnProperty(clave)) {
                ingresos[clave].cantidad_real = formatterPeso.format(ingresos[clave].cantidad);
+               fechaMoment = moment(ingresos[clave].fecha);
+               ingresos[clave].fecha = fechaMoment.format('DD/MM/YYYY');
           }
      }
-}
-     console.log(ingresos);
+     }
+
      res.render('links/ingresos', { ingresos });
 
-});*/
+});
 
 router.get('/listar_facturas/:id', async (req, res) => {
      let id = req.params.id;
@@ -716,6 +719,20 @@ router.post('/sell_done', async (req, res) => {
                }
 
                await pool.query('INSERT INTO venta SET ?', [venta]);
+
+
+               const pc = await pool.query('SELECT * FROM computador WHERE ID=?', [localStorage.key(x)]);
+
+               const precio = localStorage.getItem(localStorage.key(x)) * pc[0].precio;
+
+               const ingreso = {
+                    codigo_factura: codigoFactura,
+                    cantidad: precio,
+                    fecha: new Date(),
+                    id_usuario: user[0].id
+               }
+
+               await pool.query('INSERT INTO ingresos SET ?', [ingreso]);
 
 
                let query2 = 'UPDATE computador SET existencias = existencias -' + localStorage.getItem(localStorage.key(x)) + ' WHERE id = ' + localStorage.key(x);
